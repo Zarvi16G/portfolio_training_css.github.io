@@ -1,0 +1,154 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: $darkgray;
+
+    * {
+        background-color: $darkgray;
+    }
+
+    .contact {
+        form {
+            .form-input {
+                @include form-label;
+            }
+
+            .btn-contact {
+                padding-top: 1rem;
+                align-self: flex-end;
+            }
+        }
+
+    }
+}
+
+
+
+@include responsive('mobile') {
+    @include contact-mobile-tablet;
+
+    .footer {
+        .contact {
+            h6 {
+                @include heading(L);
+            }
+
+            .img-decoration-form {
+                @include transparent-element;
+                position: relative;
+                width: 100%;
+                top: -8rem;
+                left: -50%;
+                z-index: 0;
+            }
+        }
+
+        .footer-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+
+            h6 {
+                padding-top: 1rem;
+                @include heading(M);
+            }
+        }
+    }
+}
+
+@include responsive('tablet') {
+    @include contact-mobile-tablet;
+
+    .footer {
+        .contact {
+            width: 60%;
+
+            h6 {
+                @include heading(XL);
+            }
+
+            .img-decoration-form {
+                @include transparent-element;
+                position: relative;
+                width: 100%;
+                top: -3rem;
+                left: -100%;
+                z-index: 0;
+            }
+        }
+
+        .footer-bottom {
+            @include social-media-base;
+
+            h6 {
+                @include heading(L);
+            }
+        }
+    }
+}
+
+@include responsive('desktop') {
+    .footer {
+        width: 100%;
+        padding: 5rem 0 5rem 0;
+
+        .contact {
+            width: 70%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding-bottom: 5rem;
+            gap: 2rem;
+
+
+            h6 {
+                @include heading(XL);
+                grid-column: 1;
+            }
+
+            p {
+                grid-column: 1;
+                width: 75%;
+                align-self: center
+            }
+
+            .img-decoration-form {
+                @include transparent-element;
+                position: relative;
+                width: 100%;
+                top: 2rem;
+                left: -65%;
+                z-index: 0;
+                grid-column: 1;
+            }
+
+            form {
+                width: 80%;
+                grid-column: 2;
+                grid-row: 1 / span 3;
+                align-self: start;
+                justify-self: end;
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+
+        .footer-bottom {
+
+            @include social-media-base {
+                width: 70%;
+            }
+
+            h6 {
+                @include heading(L);
+            }
+        }
+    }
+}

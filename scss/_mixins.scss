@@ -1,0 +1,168 @@
+@use 'variables' as *;
+
+@mixin heading($size) {
+    font-family: $font-main;
+    font-weight: 700;
+
+    @if $size =="XL" {
+        font-size: 88px;
+        line-height: 88px;
+        letter-spacing: -2.5px;
+    }
+
+    @else if $size =="L" {
+        font-size: 48px;
+        line-height: 56px;
+        letter-spacing: -1.5px;
+    }
+
+    @else if $size =="M" {
+        font-size: 24px;
+        line-height: 32px;
+    }
+}
+
+@mixin body {
+    font-family: $font-main;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 28px;
+}
+
+@mixin btn {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: $white;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    a {
+        color: $white;
+        text-decoration: underline;
+        text-decoration-color: $green;
+        text-underline-offset: 1.7rem;
+        text-decoration-thickness: 3px;
+
+        &:hover {
+            color: $green;
+        }
+    }
+
+
+}
+
+@mixin form-label {
+    border: none;
+    outline: none;
+    border-bottom: 1px solid $lightgray;
+    height: 4rem;
+    text-indent: 1.5rem;
+    text-transform: uppercase;
+
+    &:nth-child(3) {
+        height: 8rem;
+    }
+
+    &:focus {
+        border-color: $green;
+    }
+
+    &:invalid:not(:placeholder-shown) {
+        border-color: #FF6F5B;
+    }
+
+    &::placeholder {
+        @include body;
+    }
+}
+
+@mixin responsive($key) {
+    @if $key =="mobile" {
+        @media (min-width: 360px) and (max-width: 767px) {
+            @content;
+        }
+    }
+
+    @if $key =="tablet" {
+        @media (min-width: 768px) and (max-width: 1439px) {
+            @content;
+        }
+    }
+
+    @if $key =="desktop" {
+        @media (min-width: 1440px) {
+            @content;
+        }
+    }
+}
+
+@mixin transparent-element {
+    background-color: transparent;
+    z-index: 1;
+}
+
+@mixin contact-mobile-tablet {
+    .footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        padding: 3rem 1rem;
+
+        .contact {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            padding-top: 1rem;
+
+            p {
+                text-align: center;
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+        }
+    }
+}
+
+@mixin social-media-base {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+
+    .line {
+        grid-column: 1 / span 2;
+    }
+
+    h6 {
+        justify-self: start;
+    }
+
+    nav {
+        justify-self: end;
+    }
+
+    @content;
+}
+
+@mixin circle-decoration {
+    @include transparent-element;
+    content: '';
+    color: $green;
+    position: absolute;
+    border-radius: 100%;
+    border: 1px solid;
+    border-color: $white;
+    @content;
+}

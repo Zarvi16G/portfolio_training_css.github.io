@@ -121,6 +121,7 @@
 @include responsive('tablet') {
     .main-container {
         width: 100%;
+        padding: 1rem;
 
         .skills {
             display: grid;

@@ -33,7 +33,11 @@
     @include contact-mobile-tablet;
 
     .footer {
+        width: 100%;
+
         .contact {
+            max-width: 440px;
+
             h6 {
                 @include heading(L);
             }
@@ -67,6 +71,8 @@
     @include contact-mobile-tablet;
 
     .footer {
+        width: 100%;
+
         .contact {
             width: 60%;
 

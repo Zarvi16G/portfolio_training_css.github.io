@@ -1,31 +1,108 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
-.header {
+// Grid layout shared by tablet and desktop
+@mixin header-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.5fr;
+    grid-template-rows: auto auto;
+    align-items: start;
+    justify-content: start;
+    gap: 2rem;
+    padding-bottom: 3rem;
+
+    h1,
+    nav {
+        grid-row: 1;
+        padding: 1rem;
+    }
 
     h1 {
-        color: $white;
+        grid-column: 1;
+    }
+
+    nav {
+        grid-column: 2;
+        justify-self: end;
+    }
+
+    .hero-img {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        justify-self: end;
+
+        .hero-img-svg {
+            width: 100%;
+        }
+
+        &::after {
+            width: 44%;
+            aspect-ratio: 1; // always a circle
+        }
     }
 
     .hero-h2 {
-        color: $white;
+        grid-column: 1;
+        grid-row: 1;
+        align-self: end;
+        margin-right: -11rem;
+    }
 
-        .hero-name-underline {
-            @include transparent-element;
-            color: $white;
-            text-decoration-color: $green;
-            text-decoration-thickness: 5px;
-            text-underline-offset: 1rem;
-            text-decoration-skip-ink: none;
-        }
+    p {
+        grid-column: 1;
+        grid-row: 2;
+        align-self: start;
+        padding: 1rem 0 6rem 1rem;
+    }
+
+    .btn-contact {
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: start;
+        padding: 3rem 1rem 2rem;
+    }
+}
+
+// Base (all sizes)
+.header {
+    position: relative;
+
+    h1,
+    nav,
+    .hero-h2 {
+        position: relative;
+        z-index: 2; // stays above the photo
     }
 
     .hero-img {
         position: relative;
+
+        &::after {
+            @include circle-decoration;
+            z-index: 2;
+        }
+    }
+
+    .hero-img-svg {
+        position: relative;
+        z-index: 1; // photo above the rings; its empty top sits behind whatever is above it
+    }
+
+    .img-decoration-hero {
+        position: absolute;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .hero-name-underline {
+        text-decoration-color: $green;
+        text-decoration-thickness: 5px;
+        text-underline-offset: 1rem;
+        text-decoration-skip-ink: none;
     }
 
     .hero-p {
-        color: $white;
+        color: $white; // overrides the global light gray for p
     }
 }
 
@@ -34,72 +111,66 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        gap: 2rem;
-        padding-bottom: 10rem;
-
+        gap: 1rem;
+        width: 100%;
+        padding-bottom: 5rem;
+        overflow-x: clip; // the circle and rings stay pinned to the edge, cut off without a horizontal scroll
+        
         h1 {
             width: 100%;
+            padding-top: 1rem;
             text-align: center;
-            position: absolute;
-            top: 1rem;
-            @include transparent-element;
-            @include heading(M);
-            z-index: 2;
         }
 
         nav {
             width: 100%;
-            @include transparent-element;
-            position: absolute;
-            top: 4rem;
-            z-index: 2;
-
-            * {
-                @include transparent-element;
-            }
 
             ul {
-                display: flex;
-                flex-direction: row;
                 justify-content: center;
                 align-items: center;
+                gap: 2rem;
+            }
+
+            img {
+                width: 1rem;
+                height: 1rem;
             }
         }
 
         .hero-img {
-            width: 50%;
-
+            display: flow-root; // keeps the photo's negative margin from moving this box
+            width: 100%;
 
             .hero-img-svg {
-                @include transparent-element;
-                position: relative;
-                width: 100%;
-                z-index: 1;
+                display: block;
+                width: 50%;
+                // pulls the top of the photo up behind the h1 and nav (% of the header width)
+                margin: -30% auto 0;
             }
 
             .img-decoration-hero {
-                @include transparent-element;
-                position: absolute;
-                width: 250%;
-                top: 35%;
-                left: -183%;
-                z-index: 0;
+                width: 130%;
+                top: 10%;
+                left: -75%;
             }
 
-            &:after {
-                @include circle-decoration {
-                    top: 66%;
-                    right: -88%;
-                    width: 70%;
-                    height: 30%;
-                }
+            // fixed size, always half outside the right edge, anchored to the photo's bottom
+            &::after {
+                right: -4.4rem;
+                bottom: -1rem;
+                width: 7.8rem;
+                height: 7.8rem;
             }
         }
 
-        .hero-h2 {
+        .hero-h2,
+        .hero-p {
             text-align: center;
-            @include heading(L);
+        }
+
+        .hero-h2 {
+            max-width: 400px;
+            margin: 0 auto;
             padding: 1rem;
 
             br {
@@ -108,197 +179,98 @@
         }
 
         .hero-p {
-            padding-right: 1rem;
-            padding-left: 1rem;
-            text-align: center;
+            max-width: 400px;
+            padding: 0 1rem;
+        }
+
+        .btn-contact {
+            margin: 2rem auto 0;
         }
     }
-
 }
 
 @include responsive('tablet') {
     .header {
-        display: grid;
-        grid-template-columns: 1fr 0.5fr;
-        grid-template-rows: auto auto;
-        align-items: start;
-        justify-content: start;
-        gap: 2rem;
-        padding-bottom: 3rem;
-
-        h1 {
-            @include heading(M);
-            grid-column: 1;
-            grid-row: 1;
-            padding: 1rem;
-        }
-
-        nav {
-            padding: 1rem;
-            @include transparent-element;
-            grid-column: 2;
-            grid-row: 1;
-            justify-self: end;
-
-            * {
-                @include transparent-element;
-            }
-        }
+        @include header-grid;
+        overflow-x: clip; // the circle stays pinned to the edge without a horizontal scroll
+        width: 100%;
 
         .hero-img {
-            grid-column: 2;
-            grid-row: 1 / span 2;
-            justify-self: end;
             width: 100%;
 
             .hero-img-svg {
-                width: 100%;
-                @include transparent-element;
-                margin-top: -6rem;
-                margin-right: -1.5rem;
+                margin-right: 18.5rem;
+                object-fit: cover;
+                object-position: bottom;
             }
 
             .img-decoration-hero {
-                @include transparent-element;
-                position: absolute;
                 width: 250%;
                 top: 4rem;
                 left: -339%;
             }
 
-            &:after {
-                @include circle-decoration {
-                    top: 75.5%;
-                    right: -3rem;
-                    width: 40%;
-                    height: 22%;
-                }
+            &::after {
+                top: 78.8%;
+                right: -3.5rem;
             }
         }
 
         .hero-h2 {
-            @include transparent-element;
-            @include heading(XL);
-            grid-column: 1;
-            grid-row: 1;
-            align-self: end;
-            margin-right: -11rem;
-            padding: 8rem 1rem 1rem 1rem;
-
+            max-width: 550px;
+            padding: 9rem 1rem 1rem;
         }
 
-        p {
-            @include transparent-element;
-            grid-column: 1;
-            grid-row: 2;
-            align-self: start;
-            padding: 1rem 0 6rem 1rem;
+        .hero-p {
+            max-width: 420px;
         }
 
         .btn-contact {
-            grid-column: 1;
-            grid-row: 2;
             align-self: end;
-            justify-self: start;
-            padding: 3rem 1rem 2rem 1rem;
         }
-
     }
 }
 
 @include responsive('desktop') {
     .header {
-        width: 70%;
-        display: grid;
-        grid-template-columns: 1fr 0.5fr;
-        grid-template-rows: auto auto;
-        align-items: start;
-        justify-content: start;
-        gap: 2rem;
-        padding-bottom: 3rem;
-
-        h1 {
-            @include heading(L);
-            grid-column: 1;
-            grid-row: 1;
-            padding: 1rem;
-        }
-
-        nav {
-            padding: 1rem;
-            @include transparent-element;
-            grid-column: 2;
-            grid-row: 1;
-            justify-self: end;
-
-            * {
-                @include transparent-element;
-            }
-        }
+        @include header-grid;
+        width: 85%;
 
         .hero-img {
-            grid-column: 2;
-            grid-row: 1 / span 2;
-            justify-self: end;
             width: 130%;
-
             .hero-img-svg {
-                width: 100%;
-                @include transparent-element;
-                margin-top: -12rem;
+                aspect-ratio: 0.6;
+                object-fit: cover;
+                object-position: bottom;
             }
 
             .img-decoration-hero {
-                @include transparent-element;
-                position: absolute;
                 width: 130%;
-                top: 7rem;
+                top: 16%;
                 left: -209%;
             }
 
-            &:after {
-                @include circle-decoration {
-                    top: 68.5%;
-                    right: 24em;
-                    width: 40%;
-                    height: 22%;
-                }
+            &::after {
+                top: 62.5%;
+                right: 77%;
             }
         }
 
         .hero-h2 {
-            @include transparent-element;
-            @include heading(XL);
-            grid-column: 1;
-            grid-row: 1;
-            align-self: end;
-            margin-right: -11rem;
-            margin-top: -5rem;
+            width: 750px;
             padding: 0 0 1rem 1rem;
-            width: 100%;
 
             br {
                 display: none;
             }
-
         }
 
         p {
-            @include transparent-element;
-            grid-column: 1;
-            grid-row: 2;
-            align-self: start;
-            padding: 1rem 0 6rem 1rem;
-            width: 60%;
+            max-width: 420px;
         }
 
         .btn-contact {
-            grid-column: 1;
-            grid-row: 2;
             align-self: center;
-            justify-self: start;
-            padding: 3rem 1rem 2rem 1rem;
         }
     }
-
 }

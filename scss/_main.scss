@@ -1,8 +1,65 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
+// Full width with side padding, shared by mobile and tablet
+@mixin main-full-width {
+    width: 100%;
+    padding: 1rem;
+    overflow-x: clip; // the rings stay pinned to the edge without a horizontal scroll
+
+    .projects {
+        width: 100%;
+    }
+}
+
+// Layout shared by tablet and desktop
+@mixin main-wide {
+    .skills {
+        display: grid;
+        gap: 4rem;
+        padding: 3rem 3rem 3rem 1rem;
+    }
+
+    .line:nth-of-type(2) {
+        display: none;
+    }
+
+    .img-decoration-line {
+        width: 600px;
+        top: -8rem;
+        right: -27rem;
+    }
+
+    .projects {
+        padding: 3rem 1rem;
+
+        // children 1 and 2 are the h4 and the button, so the cards start at 3
+        .project-card:nth-child(odd) {
+            grid-column: 1;
+        }
+
+        .project-card:nth-child(even) {
+            grid-column: 2;
+        }
+    }
+}
+
+// Base (all sizes)
 .main-container {
-    gap: 2rem;
+    // width: 100% includes the padding, so nothing in main grows wider than the screen
+    &,
+    * {
+        box-sizing: border-box;
+    }
+
+    .div-decoration {
+        position: relative;
+        width: 100%;
+    }
+
+    .img-decoration-line {
+        position: absolute;
+    }
 
     .projects {
         display: grid;
@@ -10,240 +67,107 @@
         gap: 2.5rem;
         padding-bottom: 5rem;
 
-        .btn-contact {
-            grid-column: 2;
-            justify-self: end;
-
-        }
-
         h4 {
             padding-bottom: 1.5rem;
         }
 
-        .project-card {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            padding-bottom: 1.5rem;
-
-
-            h5 {
-                grid-column: span 2;
-            }
-
-            p {
-                text-transform: uppercase;
-                grid-column: span 2;
-                padding-bottom: 1.5rem;
-
-
-            }
-
-            img {
-                grid-column: span 2;
-                width: 100%;
-                height: auto;
-            }
-
-            .btn-view {
-                grid-column: 1;
-            }
-
-            .btn-code {
-                grid-column: 2;
-            }
+        .btn-contact {
+            grid-column: 2;
+            justify-self: end;
         }
     }
 
+    .project-card {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        padding-bottom: 1.5rem;
+
+        img,
+        h5,
+        p {
+            grid-column: span 2;
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+        }
+
+        h5 {
+            @include heading-responsive(M);
+        }
+
+        p {
+            padding-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .btn-view {
+            grid-column: 1;
+        }
+
+        .btn-code {
+            grid-column: 2;
+        }
+    }
 }
 
 @include responsive('mobile') {
     .main-container {
-        width: 100%;
+        @include main-full-width;
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 1rem;
+        gap: 2rem;
 
         .skills {
-            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 1rem;
-
-            .skill-card {
-                text-align: center;
-
-                h3 {
-                    @include heading(L);
-                }
-            }
-        }
-
-        .div-decoration {
-            @include transparent-element;
-            position: relative;
             width: 100%;
-            height: auto;
-
-            .img-decoration-line {
-                @include transparent-element;
-                position: absolute;
-                top: -6rem;
-                right: -23rem;
-                z-index: 0;
-            }
         }
 
+        .skill-card {
+            text-align: center;
+        }
+
+        .img-decoration-line {
+            top: -6rem;
+            right: -23rem;
+        }
+
+        // base width: cards fill the screen on small phones and stop growing at 440px
         .projects {
-            width: 100%;
+            grid-template-columns: 1fr auto;
+            column-gap: 1rem;
+            max-width: 440px;
+        }
 
-            h4 {
-                grid-column: 1;
-                @include heading(L);
-            }
-
-            .btn-contact {
-                grid-column: 2;
-            }
-
-            .project-card {
-                grid-column: 1 / span 2;
-
-                h5 {
-                    @include heading(M);
-                }
-            }
+        .project-card {
+            grid-column: 1 / span 2;
         }
     }
 }
 
 @include responsive('tablet') {
     .main-container {
-        width: 100%;
-        padding: 1rem;
+        @include main-full-width;
+        @include main-wide;
 
         .skills {
-            display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 4rem;
-            padding: 3rem 3rem 3rem 1rem;
-
-            .skill-card {
-                h3 {
-                    @include heading(L);
-                }
-            }
-
-        }
-
-        .line:nth-of-type(2) {
-            display: none;
-        }
-
-        .div-decoration {
-            @include transparent-element;
-            position: relative;
-            width: 100%;
-            height: auto;
-
-            .img-decoration-line {
-                @include transparent-element;
-                position: absolute;
-                width: 600px;
-                top: -8rem;
-                right: -27rem;
-                z-index: 0;
-            }
-        }
-
-        .projects {
-            width: 100%;
-            padding: 3rem 1rem 3rem 1rem;
-
-            h4 {
-                @include heading(XL);
-            }
-
-
-
-            .project-card {
-                h5 {
-                    @include heading(M);
-                }
-            }
-
-            .project-card:nth-child(odd) {
-                grid-column: 1;
-            }
-
-            .project-card:nth-child(even) {
-                grid-column: 2;
-            }
         }
     }
 }
 
 @include responsive('desktop') {
     .main-container {
-        width: 70%;
+        @include main-wide;
+        width: 85%;
 
         .skills {
-            display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 4rem;
-            padding: 3rem 3rem 3rem 1rem;
-
-            .skill-card {
-                h3 {
-                    @include heading(L);
-                }
-            }
-
-        }
-
-        .line:nth-of-type(2) {
-            display: none;
-        }
-
-        .div-decoration {
-            @include transparent-element;
-            position: relative;
-            width: 100%;
-            height: auto;
-
-            .img-decoration-line {
-                @include transparent-element;
-                position: absolute;
-                width: 600px;
-                top: -8rem;
-                right: -27rem;
-                z-index: 0;
-            }
-        }
-
-        .projects {
-            padding: 3rem 1rem 3rem 1rem;
-
-            h4 {
-                @include heading(XL);
-            }
-
-
-
-            .project-card {
-                h5 {
-                    @include heading(M);
-                }
-            }
-
-            .project-card:nth-child(odd) {
-                grid-column: 1;
-            }
-
-            .project-card:nth-child(even) {
-                grid-column: 2;
-            }
         }
     }
 }

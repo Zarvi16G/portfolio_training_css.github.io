@@ -1,44 +1,51 @@
 @use 'variables' as *;
 @use 'mixins' as *;
-@use 'header' as *;
-@use 'main' as *;
-@use 'footer' as *;
+@use 'header';
+@use 'main';
+@use 'footer';
 
 * {
-    box-sizing: border-box;
-    background-color: $black;
-    font-family: $font-main;
-    color: $white;
     margin: 0;
     padding: 0;
+    font-family: $font-main;
+    color: $white;
+}
 
-    [class^="btn-"] {
-        @include btn;
-    }
+[class^="btn-"] {
+    @include btn;
 }
 
 body {
+    min-width: 320px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 100%;
+    background-color: $black;
+}
+
+// Heading roles; sections that need M override them (card titles, footer logo)
+h2 {
+    @include heading-responsive(XL);
+}
+
+h1,
+h3,
+h4,
+h5,
+h6 {
+    @include heading-responsive(L);
+}
+
+p {
+    @include body(L);
+    color: $lightgray;
 }
 
 .social-media {
     display: flex;
-    flex-direction: row;
     gap: 20px;
     padding: 10px;
-
-    li {
-        list-style: none;
-    }
-}
-
-p {
-    @include body;
-    color: $lightgray;
+    list-style: none;
 }
 
 .line {

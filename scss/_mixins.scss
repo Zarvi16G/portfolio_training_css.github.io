@@ -1,70 +1,116 @@
+@use 'sass:list';
+@use 'sass:map';
 @use 'variables' as *;
 
+// size, line-height, letter-spacing
+$headings: (
+    'XL': (88px, 88px, -2.5px),
+    'L': (48px, 56px, -1.5px),
+    'M': (24px, 32px, normal),
+);
+
 @mixin heading($size) {
-    font-family: $font-main;
+    @if not map.has-key($headings, $size) {
+        @error "Unknown heading size `#{$size}`. Use one of: #{map.keys($headings)}.";
+    }
+
+    $values: map.get($headings, $size);
     font-weight: 700;
-
-    @if $size =="XL" {
-        font-size: 88px;
-        line-height: 88px;
-        letter-spacing: -2.5px;
-    }
-
-    @else if $size =="L" {
-        font-size: 48px;
-        line-height: 56px;
-        letter-spacing: -1.5px;
-    }
-
-    @else if $size =="M" {
-        font-size: 24px;
-        line-height: 32px;
-    }
+    font-size: list.nth($values, 1);
+    line-height: list.nth($values, 2);
+    letter-spacing: list.nth($values, 3);
 }
 
-@mixin body {
-    font-family: $font-main;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 28px;
-}
+// Size each heading role uses on mobile, tablet and desktop: it steps down on smaller screens
+$heading-steps: (
+    'XL': (L, L, XL),
+    'L': (M, L, L),
+    'M': (M, M, M),
+);
 
-@mixin btn {
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: $white;
-    cursor: pointer;
-    border: none;
-    display: flex;
-    justify-content: start;
-    align-items: center;
+// Mobile size as the base, then only the breakpoints that change it
+@mixin heading-responsive($role) {
+    @if not map.has-key($heading-steps, $role) {
+        @error "Unknown heading role `#{$role}`. Use one of: #{map.keys($heading-steps)}.";
+    }
 
-    a {
-        color: $white;
-        text-decoration: underline;
-        text-decoration-color: $green;
-        text-underline-offset: 1.7rem;
-        text-decoration-thickness: 3px;
+    $mobile: list.nth(map.get($heading-steps, $role), 1);
+    $tablet: list.nth(map.get($heading-steps, $role), 3);
+    $desktop: list.nth(map.get($heading-steps, $role), 3);
 
-        &:hover {
-            color: $green;
+    @include heading($mobile);
+
+    @if $tablet != $mobile {
+        @include responsive('tablet') {
+            @include heading($tablet);
         }
     }
 
+    @if $desktop != $mobile {
+        @include responsive('desktop') {
+            @include heading($desktop);
+        }
+    }
+}
 
+// font-size, line-height
+$bodies: (
+    'L': (18px, 28px),
+);
+
+@mixin body($size) {
+    @if not map.has-key($bodies, $size) {
+        @error "Unknown body size `#{$size}`. Use one of: #{map.keys($bodies)}.";
+    }
+
+    $values: map.get($bodies, $size);
+    font-weight: 500;
+    font-size: list.nth($values, 1);
+    line-height: list.nth($values, 2);
+}
+
+@mixin responsive($key) {
+    @if not map.has-key($breakpoints, $key) {
+        @error "Unknown breakpoint `#{$key}`. Use one of: #{map.keys($breakpoints)}.";
+    }
+
+    @media #{map.get($breakpoints, $key)} {
+        @content;
+    }
+}
+
+@mixin btn {
+    display: flex;
+    align-items: center;
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    a {
+        text-decoration: underline $green 3px;
+        text-underline-offset: 1.7rem;
+    }
+
+    // the whole button triggers the hover, not only the link text
+    &:hover a {
+        color: $green;
+    }
 }
 
 @mixin form-label {
-    border: none;
-    outline: none;
-    border-bottom: 1px solid $lightgray;
     height: 4rem;
+    border: none;
+    border-bottom: 1px solid $lightgray;
+    outline: none;
+    background-color: transparent;
     text-indent: 1.5rem;
     text-transform: uppercase;
 
-    &:nth-child(3) {
+    &:is(textarea) {
         height: 8rem;
     }
 
@@ -72,97 +118,24 @@
         border-color: $green;
     }
 
+    // validated while typing; shows the .form-error message placed right after the field
     &:invalid:not(:placeholder-shown) {
-        border-color: #FF6F5B;
+        border-color: $red;
+        color: $red;
+
+        + .form-error {
+            display: block;
+        }
     }
 
     &::placeholder {
-        @include body;
+        @include body(L);
     }
-}
-
-@mixin responsive($key) {
-    @if $key =="mobile" {
-        @media (min-width: 360px) and (max-width: 767px) {
-            @content;
-        }
-    }
-
-    @if $key =="tablet" {
-        @media (min-width: 768px) and (max-width: 1439px) {
-            @content;
-        }
-    }
-
-    @if $key =="desktop" {
-        @media (min-width: 1440px) {
-            @content;
-        }
-    }
-}
-
-@mixin transparent-element {
-    background-color: transparent;
-    z-index: 1;
-}
-
-@mixin contact-mobile-tablet {
-    .footer {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2rem;
-        padding: 3rem 1rem;
-
-        .contact {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-            padding-top: 1rem;
-
-            p {
-                text-align: center;
-            }
-
-            form {
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-                width: 100%;
-            }
-        }
-    }
-}
-
-@mixin social-media-base {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-
-    .line {
-        grid-column: 1 / span 2;
-    }
-
-    h6 {
-        justify-self: start;
-    }
-
-    nav {
-        justify-self: end;
-    }
-
-    @content;
 }
 
 @mixin circle-decoration {
-    @include transparent-element;
     content: '';
-    color: $green;
     position: absolute;
+    border: 1px solid $white;
     border-radius: 100%;
-    border: 1px solid;
-    border-color: $white;
-    @content;
 }
